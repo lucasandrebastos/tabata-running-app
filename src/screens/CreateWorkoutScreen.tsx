@@ -9,8 +9,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useWorkouts } from "../context/WorkoutsContext";
 import type { TrainingZone, Workout } from "../domain/models/workout";
+import type { RootStackParamList } from "../types/navigation";
 
 const ZONE_1_COLOR = "#1C66FF";
 const ZONE_3_COLOR = "#EF6C00";
@@ -39,6 +42,8 @@ function formatMinutes(totalSeconds: number) {
 }
 
 export function CreateWorkoutScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [workoutName, setWorkoutName] = useState("Custom Workout");
   const [warmUpMinutes, setWarmUpMinutes] = useState(5);
   const [cooldownMinutes, setCooldownMinutes] = useState(5);
@@ -109,6 +114,7 @@ export function CreateWorkoutScreen() {
       },
     };
     addWorkout(workout);
+    navigation.navigate("Home");
   };
 
   return (
