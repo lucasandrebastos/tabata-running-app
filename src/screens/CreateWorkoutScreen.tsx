@@ -1,19 +1,33 @@
 import React, { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
+import { useWorkouts } from "../context/WorkoutsContext";
+import type { TrainingZone, Workout } from "../domain/models/workout";
 
 const ZONE_1_COLOR = "#1C66FF";
 const ZONE_3_COLOR = "#EF6C00";
-const ZONE_COLORS: Record<string, string> = {
+const ZONE_COLORS: Record<TrainingZone, string> = {
   "Zone 1": "#1C66FF",
   "Zone 2": "#2E7D32",
   "Zone 3": "#EF6C00",
   "Zone 4": "#E53935",
   "Zone 5": "#8E24AA",
 };
-const ZONE_OPTIONS = ["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5"];
+const ZONE_OPTIONS: TrainingZone[] = [
+  "Zone 1",
+  "Zone 2",
+  "Zone 3",
+  "Zone 4",
+  "Zone 5",
+];
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -25,13 +39,15 @@ function formatMinutes(totalSeconds: number) {
 }
 
 export function CreateWorkoutScreen() {
+  const [workoutName, setWorkoutName] = useState("Custom Workout");
   const [warmUpMinutes, setWarmUpMinutes] = useState(5);
   const [cooldownMinutes, setCooldownMinutes] = useState(5);
   const [rounds, setRounds] = useState(8);
   const [workMinutes, setWorkMinutes] = useState(1);
   const [restMinutes, setRestMinutes] = useState(1);
-  const [workZone, setWorkZone] = useState("Zone 3");
-  const [restZone, setRestZone] = useState("Zone 1");
+  const [workZone, setWorkZone] = useState<TrainingZone>("Zone 3");
+  const [restZone, setRestZone] = useState<TrainingZone>("Zone 1");
+  const { addWorkout } = useWorkouts();
 
   const totalSeconds = useMemo(() => {
     return (
@@ -41,21 +57,76 @@ export function CreateWorkoutScreen() {
     );
   }, [warmUpMinutes, cooldownMinutes, rounds, workMinutes, restMinutes]);
 
-  const handleBack = () => {
-    // Navigation can be wired later.
+  const handleSave = () => {
+    const id = `workout-${Date.now()}`;
+    const workout: Workout = {
+      id,
+      name: workoutName.trim() || "Custom Workout",
+      warmUp: {
+        id: `${id}-warm`,
+        type: "warm-up",
+        steps: [
+          {
+            id: `${id}-warm-1`,
+            name: "Warm-up",
+            type: "recovery",
+            durationSeconds: warmUpMinutes * 60,
+            zone: "Zone 1",
+          },
+        ],
+      },
+      intervals: [
+        {
+          id: `${id}-int-1`,
+          type: "interval",
+          rounds,
+          work: {
+            label: "Work",
+            type: "work",
+            durationSeconds: workMinutes * 60,
+            zone: workZone,
+          },
+          rest: {
+            label: "Rest",
+            type: "rest",
+            durationSeconds: restMinutes * 60,
+            zone: restZone,
+          },
+        },
+      ],
+      cooldown: {
+        id: `${id}-cool`,
+        type: "cooldown",
+        steps: [
+          {
+            id: `${id}-cool-1`,
+            name: "Cooldown",
+            type: "recovery",
+            durationSeconds: cooldownMinutes * 60,
+            zone: "Zone 1",
+          },
+        ],
+      },
+    };
+    addWorkout(workout);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.appBar}>
-        <ThemedText style={styles.appBarTitle}>New Interval Workout</ThemedText>
-        <View style={styles.appBarSpacer} />
-      </View>
-
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.card}>
+          <ThemedText style={styles.cardTitle}>Workout Name</ThemedText>
+          <TextInput
+            style={styles.nameInput}
+            value={workoutName}
+            onChangeText={setWorkoutName}
+            placeholder="Enter workout name"
+            placeholderTextColor="#94A3B8"
+          />
+        </View>
         <View style={styles.card}>
           <ThemedText style={styles.cardTitle}>Warm-up</ThemedText>
           <View style={styles.row}>
@@ -301,9 +372,7 @@ export function CreateWorkoutScreen() {
             styles.primaryButton,
             pressed ? styles.pressed : null,
           ]}
-          onPress={() => {
-            // Save action can be wired later.
-          }}
+          onPress={handleSave}
         >
           <ThemedText style={styles.primaryButtonText}>Save Workout</ThemedText>
         </Pressable>
@@ -366,6 +435,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#101016",
+  },
+  nameInput: {
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: "#101016",
+    backgroundColor: "#F8FAFC",
   },
   row: {
     flexDirection: "row",

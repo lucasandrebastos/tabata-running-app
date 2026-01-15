@@ -5,161 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
 import { useWorkout } from "../context/WorkoutContext";
+import { useWorkouts } from "../context/WorkoutsContext";
 import { linearizeWorkoutSteps } from "../domain/models/linearize-workout";
 import type { Workout } from "../domain/models/workout";
 import type { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
-
-const MOCK_WORKOUTS: Workout[] = [
-  {
-    id: "w1",
-    name: "Tabata Sprint",
-    warmUp: {
-      id: "w1-warm",
-      type: "warm-up",
-      steps: [
-        {
-          id: "w1-warm-1",
-          name: "Warm-up",
-          type: "recovery",
-          durationSeconds: 300,
-          zone: "Zone 1",
-        },
-      ],
-    },
-    intervals: [
-      {
-        id: "w1-int-1",
-        type: "interval",
-        rounds: 8,
-        work: {
-          label: "Run",
-          type: "work",
-          durationSeconds: 20,
-          zone: "Zone 3",
-        },
-        rest: {
-          label: "Recovery",
-          type: "rest",
-          durationSeconds: 10,
-          zone: "Zone 1",
-        },
-      },
-    ],
-    cooldown: {
-      id: "w1-cool",
-      type: "cooldown",
-      steps: [
-        {
-          id: "w1-cool-1",
-          name: "Cooldown",
-          type: "recovery",
-          durationSeconds: 300,
-          zone: "Zone 1",
-        },
-      ],
-    },
-  },
-  {
-    id: "w2",
-    name: "Hill Intervals",
-    warmUp: {
-      id: "w2-warm",
-      type: "warm-up",
-      steps: [
-        {
-          id: "w2-warm-1",
-          name: "Warm-up",
-          type: "recovery",
-          durationSeconds: 420,
-          zone: "Zone 1",
-        },
-      ],
-    },
-    intervals: [
-      {
-        id: "w2-int-1",
-        type: "interval",
-        rounds: 6,
-        work: {
-          label: "Uphill",
-          type: "work",
-          durationSeconds: 60,
-          zone: "Zone 3",
-        },
-        rest: {
-          label: "Downhill",
-          type: "rest",
-          durationSeconds: 60,
-          zone: "Zone 1",
-        },
-      },
-    ],
-    cooldown: {
-      id: "w2-cool",
-      type: "cooldown",
-      steps: [
-        {
-          id: "w2-cool-1",
-          name: "Cooldown",
-          type: "recovery",
-          durationSeconds: 300,
-          zone: "Zone 1",
-        },
-      ],
-    },
-  },
-  {
-    id: "w3",
-    name: "Tempo Run",
-    warmUp: {
-      id: "w3-warm",
-      type: "warm-up",
-      steps: [
-        {
-          id: "w3-warm-1",
-          name: "Warm-up",
-          type: "recovery",
-          durationSeconds: 300,
-          zone: "Zone 1",
-        },
-      ],
-    },
-    intervals: [
-      {
-        id: "w3-int-1",
-        type: "interval",
-        rounds: 4,
-        work: {
-          label: "Tempo",
-          type: "work",
-          durationSeconds: 180,
-          zone: "Zone 2",
-        },
-        rest: {
-          label: "Recovery",
-          type: "rest",
-          durationSeconds: 60,
-          zone: "Zone 1",
-        },
-      },
-    ],
-    cooldown: {
-      id: "w3-cool",
-      type: "cooldown",
-      steps: [
-        {
-          id: "w3-cool-1",
-          name: "Cooldown",
-          type: "recovery",
-          durationSeconds: 240,
-          zone: "Zone 1",
-        },
-      ],
-    },
-  },
-];
 
 function getWorkoutSummary(workout: Workout) {
   const steps = linearizeWorkoutSteps(workout);
@@ -179,10 +30,10 @@ function getWorkoutSummary(workout: Workout) {
 
 export function HomeScreen({ navigation }: Props) {
   const { start } = useWorkout();
+  const { workouts } = useWorkouts();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
     null
   );
-  const workouts = useMemo(() => MOCK_WORKOUTS, []);
 
   const selectedWorkout = useMemo(
     () => workouts.find((workout) => workout.id === selectedWorkoutId) ?? null,
