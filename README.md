@@ -1,50 +1,132 @@
-# Welcome to your Expo app 👋
+# 🏃‍♂️ Running Zones Timer
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Um app mobile para **treinos de corrida intervalados por zonas de esforço**, inspirado em timers Tabata, mas adaptado para a lógica real de corrida.
 
-## Get started
+O app permite criar treinos personalizados (aquecimento, intervalos e desaquecimento) e executá-los com **alertas sonoros e por voz no fone**, indicando exatamente quando correr forte ou reduzir o ritmo.
 
-1. Install dependencies
+> Ideal para quem treina por zonas (Z1, Z2, Z3…) e quer foco total na corrida, sem precisar olhar o celular.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## ✨ Funcionalidades
 
-   ```bash
-   npx expo start
-   ```
+- ⏱️ Timer intervalado inteligente
+- 🧩 Treinos customizáveis por blocos
+- 🔁 Suporte a rounds (ex: 14x 1min forte / 1min leve)
+- 🎧 Alertas sonoros e por voz (Text-to-Speech)
+- 🌗 Dark mode (foco outdoor)
+- 📱 Funciona com tela bloqueada
+- 💾 Salvamento local de treinos
+- 🧠 Interface minimalista e legível durante a corrida
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🏗️ Arquitetura
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+O app foi projetado com **separação clara de responsabilidades**, facilitando manutenção e evolução.
 
-## Get a fresh project
+src/
+├── screens/ # Telas do app
+├── components/ # Componentes reutilizáveis
+├── domain/ # Regras de negócio (Workout, Timer)
+│ ├── models/
+│ ├── parser/
+│ └── timer/
+├── state/ # Contexts e controllers
+├── services/ # Áudio, TTS, background tasks
+├── storage/ # Persistência local
+└── utils/
 
-When you're ready, run:
+yaml
+Copiar código
+
+- **UI Layer** → React Native
+- **Domain Layer** → Lógica pura (agnóstica de UI)
+- **Services** → Expo APIs (áudio, speech, background)
+- **State** → Context + Hooks
+
+---
+
+## 🧠 Conceito de Treino
+
+Exemplo de treino suportado:
+
+- Aquecimento: 5 min — Zona 1
+- Intervalado:
+  - 14 rounds
+  - 1 min — Zona 3
+  - 1 min — Zona 1
+- Desaquecimento: 5 min — Zona 1
+
+O app converte essa estrutura em uma **fila linear de etapas**, executadas automaticamente com avisos no fone.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+- **React Native**
+- **Expo (Managed Workflow)**
+- **TypeScript**
+- **Expo AV** (áudio)
+- **Expo Speech** (voz)
+- **AsyncStorage** (persistência local)
+
+---
+
+## 🚀 Como rodar o projeto
+
+### Pré-requisitos
+
+- Node.js (LTS)
+- Expo CLI
+- Emulador ou celular físico
+
+### Instalação
 
 ```bash
-npm run reset-project
+git clone https://github.com/seu-usuario/running-zones-timer.git
+cd running-zones-timer
+npm install
+Rodando o app
+bash
+Copiar código
+npx expo start
+Depois:
+
+a → Android
+
+i → iOS
+
+Ou escaneie o QR Code com o Expo Go
+
+🗺️ Roadmap
+ MVP do timer funcional
+
+ Persistência de treinos
+
+ Histórico de treinos
+
+ Integração com frequência cardíaca
+
+ Integração com smartwatch
+
+ Exportar / compartilhar treinos
+
+🧩 Metodologia
+O desenvolvimento segue um modelo Scrumban, com:
+
+Backlog organizado por épicos
+
+Board Kanban no Notion
+
+Tarefas pequenas e iterativas
+
+📄 Licença
+Este projeto está sob a licença MIT.
+Sinta-se livre para usar, modificar e contribuir.
+
+👤 Autor
+Lucas Bastos
+Desenvolvedor Fullstack • Produtor Musical • DJ
+São Paulo — Brasil
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
