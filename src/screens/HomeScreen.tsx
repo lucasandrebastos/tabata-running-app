@@ -1,51 +1,227 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/themed-text";
+import { useWorkout } from "../context/WorkoutContext";
+import { linearizeWorkoutSteps } from "../domain/models/linearize-workout";
+import type { Workout } from "../domain/models/workout";
 import type { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
-type Workout = {
-  id: string;
-  name: string;
-  durationMinutes: number;
-  rounds: number;
-};
-
 const MOCK_WORKOUTS: Workout[] = [
-  { id: "w1", name: "Tabata Sprint", durationMinutes: 20, rounds: 8 },
-  { id: "w2", name: "Hill Intervals", durationMinutes: 30, rounds: 6 },
-  { id: "w3", name: "Tempo Run", durationMinutes: 25, rounds: 4 },
+  {
+    id: "w1",
+    name: "Tabata Sprint",
+    warmUp: {
+      id: "w1-warm",
+      type: "warm-up",
+      steps: [
+        {
+          id: "w1-warm-1",
+          name: "Warm-up",
+          type: "recovery",
+          durationSeconds: 300,
+          zone: "Zone 1",
+        },
+      ],
+    },
+    intervals: [
+      {
+        id: "w1-int-1",
+        type: "interval",
+        rounds: 8,
+        work: {
+          label: "Run",
+          type: "work",
+          durationSeconds: 20,
+          zone: "Zone 3",
+        },
+        rest: {
+          label: "Recovery",
+          type: "rest",
+          durationSeconds: 10,
+          zone: "Zone 1",
+        },
+      },
+    ],
+    cooldown: {
+      id: "w1-cool",
+      type: "cooldown",
+      steps: [
+        {
+          id: "w1-cool-1",
+          name: "Cooldown",
+          type: "recovery",
+          durationSeconds: 300,
+          zone: "Zone 1",
+        },
+      ],
+    },
+  },
+  {
+    id: "w2",
+    name: "Hill Intervals",
+    warmUp: {
+      id: "w2-warm",
+      type: "warm-up",
+      steps: [
+        {
+          id: "w2-warm-1",
+          name: "Warm-up",
+          type: "recovery",
+          durationSeconds: 420,
+          zone: "Zone 1",
+        },
+      ],
+    },
+    intervals: [
+      {
+        id: "w2-int-1",
+        type: "interval",
+        rounds: 6,
+        work: {
+          label: "Uphill",
+          type: "work",
+          durationSeconds: 60,
+          zone: "Zone 3",
+        },
+        rest: {
+          label: "Downhill",
+          type: "rest",
+          durationSeconds: 60,
+          zone: "Zone 1",
+        },
+      },
+    ],
+    cooldown: {
+      id: "w2-cool",
+      type: "cooldown",
+      steps: [
+        {
+          id: "w2-cool-1",
+          name: "Cooldown",
+          type: "recovery",
+          durationSeconds: 300,
+          zone: "Zone 1",
+        },
+      ],
+    },
+  },
+  {
+    id: "w3",
+    name: "Tempo Run",
+    warmUp: {
+      id: "w3-warm",
+      type: "warm-up",
+      steps: [
+        {
+          id: "w3-warm-1",
+          name: "Warm-up",
+          type: "recovery",
+          durationSeconds: 300,
+          zone: "Zone 1",
+        },
+      ],
+    },
+    intervals: [
+      {
+        id: "w3-int-1",
+        type: "interval",
+        rounds: 4,
+        work: {
+          label: "Tempo",
+          type: "work",
+          durationSeconds: 180,
+          zone: "Zone 2",
+        },
+        rest: {
+          label: "Recovery",
+          type: "rest",
+          durationSeconds: 60,
+          zone: "Zone 1",
+        },
+      },
+    ],
+    cooldown: {
+      id: "w3-cool",
+      type: "cooldown",
+      steps: [
+        {
+          id: "w3-cool-1",
+          name: "Cooldown",
+          type: "recovery",
+          durationSeconds: 240,
+          zone: "Zone 1",
+        },
+      ],
+    },
+  },
 ];
 
+function getWorkoutSummary(workout: Workout) {
+  const steps = linearizeWorkoutSteps(workout);
+  const totalSeconds = steps.reduce(
+    (acc, step) => acc + step.durationSeconds,
+    0
+  );
+  const rounds = workout.intervals.reduce(
+    (acc, interval) => acc + interval.rounds,
+    0
+  );
+  return {
+    minutes: Math.round(totalSeconds / 60),
+    rounds,
+  };
+}
+
 export function HomeScreen({ navigation }: Props) {
+  const { start } = useWorkout();
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
+    null
+  );
+  const workouts = useMemo(() => MOCK_WORKOUTS, []);
+
+  const selectedWorkout = useMemo(
+    () => workouts.find((workout) => workout.id === selectedWorkoutId) ?? null,
+    [selectedWorkoutId, workouts]
+  );
+
   const handleStartWorkoutPress = () => {
-    // TODO: Hook up to active workout flow.
+    if (!selectedWorkout) {
+      return;
+    }
+    const steps = linearizeWorkoutSteps(selectedWorkout);
+    start(steps);
+    navigation.navigate("Workout");
   };
 
   const handleCreateWorkoutPress = () => {
     navigation.navigate("CreateWorkoutStack");
   };
 
-  const renderWorkoutCard = ({ item }: { item: Workout }) => (
-    <Pressable
-      style={({ pressed }) => [
-        styles.card,
-        pressed ? styles.cardPressed : null,
-      ]}
-      onPress={() => {
-        // TODO: Navigate to workout details in the future.
-      }}
-    >
-      <ThemedText style={styles.cardTitle}>{item.name}</ThemedText>
-      <ThemedText style={styles.cardMeta}>
-        {item.durationMinutes} min · {item.rounds} rounds
-      </ThemedText>
-    </Pressable>
-  );
+  const renderWorkoutCard = ({ item }: { item: Workout }) => {
+    const summary = getWorkoutSummary(item);
+    const isSelected = item.id === selectedWorkoutId;
+
+    return (
+      <Pressable
+        style={({ pressed }) => [
+          styles.card,
+          isSelected ? styles.cardSelected : null,
+          pressed ? styles.cardPressed : null,
+        ]}
+        onPress={() => setSelectedWorkoutId(item.id)}
+      >
+        <ThemedText style={styles.cardTitle}>{item.name}</ThemedText>
+        <ThemedText style={styles.cardMeta}>
+          {summary.minutes} min · {summary.rounds} rounds
+        </ThemedText>
+      </Pressable>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,7 +233,7 @@ export function HomeScreen({ navigation }: Props) {
       </View>
 
       <FlatList
-        data={MOCK_WORKOUTS}
+        data={workouts}
         keyExtractor={(item) => item.id}
         renderItem={renderWorkoutCard}
         contentContainerStyle={styles.listContent}
@@ -69,8 +245,10 @@ export function HomeScreen({ navigation }: Props) {
           style={({ pressed }) => [
             styles.primaryButton,
             pressed ? styles.primaryButtonPressed : null,
+            !selectedWorkout ? styles.primaryButtonDisabled : null,
           ]}
           onPress={handleStartWorkoutPress}
+          disabled={!selectedWorkout}
         >
           <ThemedText style={styles.primaryButtonText}>
             Start Workout
@@ -128,6 +306,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 2,
   },
+  cardSelected: {
+    borderWidth: 2,
+    borderColor: "#1C66FF",
+  },
   cardPressed: {
     opacity: 0.8,
     transform: [{ scale: 0.98 }],
@@ -156,6 +338,9 @@ const styles = StyleSheet.create({
   },
   primaryButtonPressed: {
     opacity: 0.85,
+  },
+  primaryButtonDisabled: {
+    opacity: 0.5,
   },
   primaryButtonText: {
     color: "#FFFFFF",

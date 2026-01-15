@@ -9,4 +9,5 @@ export type RootStackParamList = {
   CreateWorkoutStack:
     | NavigatorScreenParams<CreateWorkoutStackParamList>
     | undefined;
+  Workout: undefined;
 };
