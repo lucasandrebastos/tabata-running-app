@@ -271,96 +271,125 @@ export function HomeScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
+  /* ---------- Screen ---------- */
   container: {
     flex: 1,
-    backgroundColor: "#F7F7FA",
+    backgroundColor: "#F5F7F8",
   },
+
+  /* ---------- Header ---------- */
   header: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
   },
+
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#101016",
+    color: "#0F172A",
   },
+
   subtitle: {
     marginTop: 6,
     fontSize: 14,
-    color: "#5B5B6B",
+    color: "#64748B",
   },
+
+  /* ---------- List ---------- */
   listContent: {
     paddingHorizontal: 20,
     paddingVertical: 12,
     gap: 12,
   },
+
+  /* ---------- Card ---------- */
   card: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
-    shadowColor: "#000000",
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+
+    shadowColor: "#000",
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
+    elevation: 3,
   },
+
   cardSelected: {
     borderWidth: 2,
-    borderColor: "#1C66FF",
+    borderColor: "#2563EB", // blue-600
   },
+
   cardPressed: {
     opacity: 0.8,
     transform: [{ scale: 0.98 }],
   },
+
   cardTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111118",
+    color: "#0F172A",
   },
+
   cardMeta: {
-    marginTop: 6,
+    marginTop: 4,
     fontSize: 13,
-    color: "#6B6B78",
+    color: "#64748B",
   },
+
+  /* ---------- Footer ---------- */
   footer: {
     paddingHorizontal: 20,
     paddingBottom: 24,
     paddingTop: 8,
     gap: 12,
   },
+
+  /* ---------- Primary Button ---------- */
   primaryButton: {
-    backgroundColor: "#1C66FF",
-    paddingVertical: 14,
+    height: 56,
     borderRadius: 14,
+    backgroundColor: "#2563EB",
     alignItems: "center",
+    justifyContent: "center",
   },
+
   primaryButtonPressed: {
     opacity: 0.85,
   },
+
   primaryButtonDisabled: {
     opacity: 0.5,
   },
+
   primaryButtonText: {
-    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+    color: "#FFFFFF",
   },
+
+  /* ---------- Secondary Button ---------- */
   secondaryButton: {
-    borderWidth: 1,
-    borderColor: "#1C66FF",
-    paddingVertical: 14,
+    height: 56,
     borderRadius: 14,
-    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2563EB",
     backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
+
   secondaryButtonPressed: {
     opacity: 0.9,
   },
+
   secondaryButtonText: {
-    color: "#1C66FF",
     fontSize: 16,
     fontWeight: "600",
+    color: "#2563EB",
   },
 });
