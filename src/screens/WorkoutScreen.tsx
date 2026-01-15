@@ -90,9 +90,11 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 72,
+    lineHeight: 84,
     fontWeight: "700",
     color: "#101016",
     letterSpacing: 2,
+    paddingVertical: 4,
   },
   zoneText: {
     fontSize: 24,
