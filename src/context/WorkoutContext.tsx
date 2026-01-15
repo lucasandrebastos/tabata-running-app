@@ -73,8 +73,19 @@ function workoutReducer(state: WorkoutState, action: WorkoutAction): WorkoutStat
         isRunning: true,
       };
     case "STOP":
+      if (state.steps.length === 0) {
+        return {
+          ...initialState,
+        };
+      }
       return {
-        ...initialState,
+        steps: state.steps,
+        currentStep: state.steps[0] ?? null,
+        currentStepIndex: 0,
+        timeLeft: state.steps[0]?.durationSeconds ?? 0,
+        isRunning: false,
+        isPaused: false,
+        isFinished: false,
       };
     case "STEP_CHANGE":
       return {
