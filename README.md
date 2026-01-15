@@ -25,20 +25,19 @@ O app permite criar treinos personalizados (aquecimento, intervalos e desaquecim
 
 O app foi projetado com **separação clara de responsabilidades**, facilitando manutenção e evolução.
 
+```text
 src/
-├── screens/ # Telas do app
-├── components/ # Componentes reutilizáveis
-├── domain/ # Regras de negócio (Workout, Timer)
-│ ├── models/
-│ ├── parser/
-│ └── timer/
-├── state/ # Contexts e controllers
-├── services/ # Áudio, TTS, background tasks
-├── storage/ # Persistência local
+├── screens/     # Telas do app
+├── components/  # Componentes reutilizáveis
+├── domain/      # Regras de negócio (Workout, Timer)
+│   ├── models/
+│   ├── parser/
+│   └── timer/
+├── state/       # Contexts e controllers
+├── services/    # Áudio, TTS, background tasks
+├── storage/     # Persistência local
 └── utils/
-
-yaml
-Copiar código
+```
 
 - **UI Layer** → React Native
 - **Domain Layer** → Lógica pura (agnóstica de UI)
@@ -87,30 +86,33 @@ O app converte essa estrutura em uma **fila linear de etapas**, executadas autom
 git clone https://github.com/seu-usuario/running-zones-timer.git
 cd running-zones-timer
 npm install
-Rodando o app
-bash
-Copiar código
+```
+
+Rodando o app:
+
+```bash
 npx expo start
+```
+
 Depois:
 
-a → Android
+- `a` → Android
+- `i` → iOS
 
-i → iOS
-
-Ou escaneie o QR Code com o Expo Go
+Ou escaneie o QR Code com o Expo Go.
 
 🗺️ Roadmap
- MVP do timer funcional
+MVP do timer funcional
 
- Persistência de treinos
+Persistência de treinos
 
- Histórico de treinos
+Histórico de treinos
 
- Integração com frequência cardíaca
+Integração com frequência cardíaca
 
- Integração com smartwatch
+Integração com smartwatch
 
- Exportar / compartilhar treinos
+Exportar / compartilhar treinos
 
 🧩 Metodologia
 O desenvolvimento segue um modelo Scrumban, com:
@@ -129,4 +131,7 @@ Sinta-se livre para usar, modificar e contribuir.
 Lucas Bastos
 Desenvolvedor Fullstack • Produtor Musical • DJ
 São Paulo — Brasil
+
+```
+
 ```
