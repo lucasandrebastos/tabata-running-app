@@ -5,7 +5,16 @@ export type StepType = "work" | "rest" | "recovery";
 export interface Step {
   /** Smallest executable unit in the timer. */
   id: string;
+  /** Label shown to the user, e.g. "Warm-up", "Run", "Recovery". */
   name: string;
+  type: StepType;
+  durationSeconds: number;
+  zone: TrainingZone;
+}
+
+export interface IntervalStepTemplate {
+  /** Template used to generate executable steps per round. */
+  label: string;
   type: StepType;
   durationSeconds: number;
   zone: TrainingZone;
@@ -23,7 +32,8 @@ export interface IntervalSegment {
   id: string;
   type: "interval";
   rounds: number;
-  steps: Step[];
+  work: IntervalStepTemplate;
+  rest: IntervalStepTemplate;
 }
 
 export interface CooldownSegment {
@@ -43,4 +53,3 @@ export interface Workout {
   intervals: IntervalSegment[];
   cooldown: CooldownSegment;
 }
-
