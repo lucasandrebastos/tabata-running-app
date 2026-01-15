@@ -14,6 +14,7 @@ type WorkoutState = {
 };
 
 type StartAction = { type: "START"; steps: Step[] };
+type PrepareAction = { type: "PREPARE"; steps: Step[] };
 type PauseAction = { type: "PAUSE" };
 type ResumeAction = { type: "RESUME" };
 type StopAction = { type: "STOP" };
@@ -30,6 +31,7 @@ type FinishAction = { type: "FINISH" };
 
 type WorkoutAction =
   | StartAction
+  | PrepareAction
   | PauseAction
   | ResumeAction
   | StopAction
@@ -60,6 +62,19 @@ function workoutReducer(state: WorkoutState, action: WorkoutAction): WorkoutStat
         isPaused: false,
         isFinished: false,
       };
+    case "PREPARE": {
+      const firstStep = action.steps[0] ?? null;
+      return {
+        ...state,
+        steps: action.steps,
+        currentStep: firstStep,
+        currentStepIndex: 0,
+        timeLeft: firstStep?.durationSeconds ?? 0,
+        isRunning: false,
+        isPaused: false,
+        isFinished: false,
+      };
+    }
     case "PAUSE":
       return {
         ...state,
@@ -114,6 +129,7 @@ function workoutReducer(state: WorkoutState, action: WorkoutAction): WorkoutStat
 
 type WorkoutContextValue = {
   state: WorkoutState;
+  prepare: (steps: Step[]) => void;
   start: (steps: Step[]) => void;
   pause: () => void;
   resume: () => void;
@@ -152,6 +168,10 @@ export function WorkoutProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: "START", steps });
   };
 
+  const prepare = (steps: Step[]) => {
+    dispatch({ type: "PREPARE", steps });
+  };
+
   const pause = () => {
     engineRef.current?.pause();
     dispatch({ type: "PAUSE" });
@@ -168,7 +188,7 @@ export function WorkoutProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <WorkoutContext.Provider value={{ state, start, pause, resume, stop }}>
+    <WorkoutContext.Provider value={{ state, prepare, start, pause, resume, stop }}>
       {children}
     </WorkoutContext.Provider>
   );

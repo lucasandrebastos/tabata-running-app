@@ -29,7 +29,7 @@ function getWorkoutSummary(workout: Workout) {
 }
 
 export function HomeScreen({ navigation }: Props) {
-  const { start } = useWorkout();
+  const { prepare } = useWorkout();
   const { workouts } = useWorkouts();
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(
     null
@@ -45,7 +45,7 @@ export function HomeScreen({ navigation }: Props) {
       return;
     }
     const steps = linearizeWorkoutSteps(selectedWorkout);
-    start(steps);
+    prepare(steps);
     navigation.navigate("Workout");
   };
 

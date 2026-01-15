@@ -20,7 +20,7 @@ function formatTime(seconds: number) {
 }
 
 export function WorkoutScreen() {
-  const { state, pause, resume, stop } = useWorkout();
+  const { state, start, pause, resume, stop } = useWorkout();
   const totalRounds = useMemo(
     () => state.steps.filter((step) => step.type === "work").length,
     [state.steps]
@@ -60,7 +60,15 @@ export function WorkoutScreen() {
 
       <View style={styles.controls}>
         <View style={styles.row}>
-          {state.isPaused ? (
+          {!state.isRunning && !state.isPaused ? (
+            <Pressable
+              style={styles.startButton}
+              onPress={() => start(state.steps)}
+              disabled={state.steps.length === 0}
+            >
+              <ThemedText style={styles.startText}>Start</ThemedText>
+            </Pressable>
+          ) : state.isPaused ? (
             <Pressable style={styles.resumeButton} onPress={resume}>
               <ThemedText style={styles.resumeText}>Play</ThemedText>
             </Pressable>
@@ -125,6 +133,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   pauseText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  startButton: {
+    flex: 1,
+    backgroundColor: "#1C66FF",
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: "center",
+  },
+  startText: {
     color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "700",
